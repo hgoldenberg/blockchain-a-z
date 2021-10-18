@@ -8,6 +8,9 @@ Created on Sun Oct 17 15:13:31 2021
 # Modulo 1 - Crear una blockchain
 # Flask==0.12.2 : pip install Flask==0.12.2
 # Cliente HTTP Postman: hhtps://www.getpostman.com/
+# Versiones
+# Python 3.8.8
+# Flask 1.1.2
 
 # Importar las librerias
 
@@ -72,12 +75,13 @@ class Blockchain:
 
 # Crear una web app
 app = Flask(__name__)
+app.config['JSONIFY_PRETTY_REGULAR'] = False
 
 # Crear una blockchain
 blockchain = Blockchain()
 
 # Minar un nuevo bloque
-@app.router('/mine_block', methods=['GET'])
+@app.route('/mine_block', methods=['GET'])
 def mine_block():
     previous_block = blockchain.get_previous_block()
     previous_proof = previous_block['proof']
@@ -92,11 +96,14 @@ def mine_block():
     return jsonify(response), 200
 
 # Obtener la cadena de bloques completa
-@app.router('/get_chain', methods=['GET'])
+@app.route('/get_chain', methods=['GET'])
 def get_chain():
     response = {'chain': blockchain.chain,
                 'length': len(blockchain.chain)}
     return jsonify(response), 200
+
+# Ejecutar la app
+app.run(host = '0.0.0.0', port = 5000)
 
 
             
