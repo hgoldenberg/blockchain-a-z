@@ -67,7 +67,9 @@ class Blockchain:
             previous_block = block
             block_index += 1
         return True
-    
+
+# Parte 2 - Minado de un Blockchain
+
 # Crear una web app
 app = Flask(__name__)
 
@@ -88,8 +90,16 @@ def mine_block():
                 'proof': block['proof'],
                 'previous-hash': block['previous_hash']}
     return jsonify(response), 200
+
+# Obtener la cadena de bloques completa
+@app.router('/get_chain', methods=['GET'])
+def get_chain():
+    response = {'chain': blockchain.chain,
+                'length': len(blockchain.chain)}
+    return jsonify(response), 200
+
+
             
                 
         
 
-# Parte 2 - Minado de un Blockchain
