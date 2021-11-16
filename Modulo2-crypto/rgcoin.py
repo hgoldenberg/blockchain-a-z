@@ -1,24 +1,28 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sun Oct 17 15:13:31 2021
+Created on Mon Nov 15 14:45:58 2021
 
 @author: hernangoldenberg
 """
-# Modulo 1 - Crear una blockchain
+
+# Modulo 2 - Crear una cryptomoneda
 # Flask==0.12.2 : pip install Flask==0.12.2
 # Cliente HTTP Postman: hhtps://www.getpostman.com/
 # Versiones
 # Python 3.8.8
 # Flask 1.1.2
+# requests 2.18.4 pip install requests==2.18.4
 
 # Importar las librerias
 
 import datetime
 import hashlib
 import json
-from flask import Flask, jsonify
-
+from flask import Flask, jsonify, request
+import requests
+from uuid import uuid4
+from urllib.parse import urlparse
 
 # Parte 1 - Crear la Blockchain
 
@@ -27,13 +31,18 @@ class Blockchain:
     def __init__(self):
         
         self.chain = []
+        self.transactions = []
         self.create_block (proof = 1, previous_hash = '0')
+        self.nodes = set()
+        
         
     def create_block(self, proof, previous_hash):
         block = {'index': len(self.chain) + 1,
                  'timestamp': str(datetime.datetime.now()),
                  'proof': proof,
-                 'previous_hash': previous_hash}
+                 'previous_hash': previous_hash,
+                 'transactions': self.transactions}
+        self.transactions = []
         self.chain.append(block)
         return block
     
@@ -70,6 +79,17 @@ class Blockchain:
             previous_block = block
             block_index += 1
         return True
+    
+    def add_transactions(self, sender, receiver, amount):
+        self.transactions.append({'sender': sender,
+                                  'receiver': receiver,
+                                  'amount': amount})
+        previous_block = self.previous_block()
+        return previous_block['index'] + 1
+    
+    def add_node(self, address):
+        parsed_url = urlparse(address)
+        self.nodes.add(parsed_url.netloc)
 
 # Parte 2 - Minado de un Blockchain
 
@@ -102,11 +122,10 @@ def get_chain():
                 'length': len(blockchain.chain)}
     return jsonify(response), 200
 
+# Parte 3 - Descentralizar Cadena de Bloques
+
+
+
 # Ejecutar la app
 app.run(host = '0.0.0.0', port = 5000)
-
-
-            
-                
-        
 
